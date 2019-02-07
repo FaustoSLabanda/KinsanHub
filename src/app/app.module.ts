@@ -11,8 +11,10 @@ import {MatInputModule} from '@angular/material'
 import {MatTableModule} from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material';
 import {MatGridListModule} from '@angular/material/grid-list';
-
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule, MatCheckboxModule} from '@angular/material';
+import {MatCardModule} from '@angular/material/card';
 
 
 import { AppComponent } from './app.component';
@@ -37,7 +39,10 @@ import { HomeComponent } from './components/home/home.component';
     MatInputModule,
     MatTableModule,
     MatGridListModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatExpansionModule,
+    MatDividerModule,
+    MatCardModule
   ],
   providers: [WeatherService],
   bootstrap: [AppComponent]

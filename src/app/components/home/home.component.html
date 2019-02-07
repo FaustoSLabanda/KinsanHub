@@ -1,5 +1,6 @@
-<mat-grid-list cols="4" rowHeight="100px">
-  <mat-grid-tile [colspan]="'2'" [rowspan]="'1'" [style.background]="'#C6D32D'">
+
+<mat-grid-list [cols]="breakpoint" (window:resize)="onResize($event)" rowHeight="100px">
+  <mat-grid-tile  [style.background]="'#C6D32D'">
     <mat-form-field>
       <mat-select [(value)]="selectedMetric" placeholder="Select metric">
         <mat-option *ngFor="let metric of metricsOption" [value]="metric.value">
@@ -9,7 +10,7 @@
     </mat-form-field>
   </mat-grid-tile>
 
-  <mat-grid-tile [colspan]="'2'" [rowspan]="'1'" [style.background]="'#C6D32D'">
+  <mat-grid-tile  [style.background]="'#C6D32D'">
     <mat-form-field>
       <mat-select [(value)]="selectedLocate" placeholder="Select locate">
         <mat-option *ngFor="let locate of locateOptions" [value]="locate.value">{{ locate.desc}}</mat-option>
@@ -17,7 +18,11 @@
     </mat-form-field>
   </mat-grid-tile>
 
-  <mat-grid-tile [colspan]="'2'" [rowspan]="'1'" [style.background]="'#e2e2e2'">
+</mat-grid-list>
+
+
+<mat-grid-list [cols]="breakpoint" (window:resize)="onResize($event)" rowHeight="100px">
+  <mat-grid-tile  [style.background]="'#e2e2e2'">
     <mat-form-field>
       <input matInput [matDatepicker]="pickerFrom" placeholder="Date from" (dateChange)="dateFrom($event)">
       <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
@@ -25,7 +30,7 @@
     </mat-form-field>
   </mat-grid-tile>
 
-  <mat-grid-tile [colspan]="'2'" [rowspan]="'1'" [style.background]="'#e2e2e2'">
+  <mat-grid-tile  [style.background]="'#e2e2e2'">
     <mat-form-field>
       <input matInput [matDatepicker]="pickerTo" placeholder="Date to" (dateChange)="dateTo($event)">
       <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
@@ -36,6 +41,56 @@
 </mat-grid-list>
 
 
+<mat-divider></mat-divider>
+
+<mat-accordion [class]="'divResults'">
+  <mat-expansion-panel [expanded]="this.arrayWeather.length> 0">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h3>Chart results</h3>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+   
+    <div *ngIf="chart">
+      <canvas id="canvas">{{ chart }}</canvas>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h3>Table results</h3>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <table *ngIf="this.arrayWeather.length> 0" mat-table [dataSource]="this.arrayWeather" class="mat-elevation-z8">
+      <!-- year Column -->
+      <ng-container matColumnDef="year">
+        <th mat-header-cell *matHeaderCellDef> Year </th>
+        <td mat-cell *matCellDef="let element"> {{element.year}} </td>
+      </ng-container>
+    
+      <!-- month Column -->
+      <ng-container matColumnDef="month">
+        <th mat-header-cell *matHeaderCellDef> Month </th>
+        <td mat-cell *matCellDef="let element"> {{element.month}} </td>
+      </ng-container>
+    
+      <!-- value Column -->
+      <ng-container matColumnDef="value">
+        <th mat-header-cell *matHeaderCellDef> Value </th>
+        <td mat-cell *matCellDef="let element"> {{element.value}} </td>
+      </ng-container>
+    
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    
+    
+    
+    </table>
+
+
+  </mat-expansion-panel>
+</mat-accordion>
 
 
 
@@ -44,30 +99,4 @@
 
 
 
-
-<table *ngIf="this.arrayWeather.length> 0" mat-table [dataSource]="this.arrayWeather" class="mat-elevation-z8">
-  <!-- year Column -->
-  <ng-container matColumnDef="year">
-    <th mat-header-cell *matHeaderCellDef> Year </th>
-    <td mat-cell *matCellDef="let element"> {{element.year}} </td>
-  </ng-container>
-
-  <!-- month Column -->
-  <ng-container matColumnDef="month">
-    <th mat-header-cell *matHeaderCellDef> Month </th>
-    <td mat-cell *matCellDef="let element"> {{element.month}} </td>
-  </ng-container>
-
-  <!-- value Column -->
-  <ng-container matColumnDef="value">
-    <th mat-header-cell *matHeaderCellDef> Value </th>
-    <td mat-cell *matCellDef="let element"> {{element.value}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-
-
-</table>
 

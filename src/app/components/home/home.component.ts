@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { WeatherService } from './../../services/weather.service';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatPaginator, MatSort } from '@angular/material';
+import { Chart } from 'chart.js';
 
 
 
@@ -11,7 +12,8 @@ import { MatPaginator, MatSort } from '@angular/material';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
+  // #region Variables
+  public chart = [];
   public displayedColumns: string[] = ['year', 'month', 'value'];
   public mFrom: number;
   public yFrom: number;
@@ -34,7 +36,6 @@ export class HomeComponent implements OnInit {
       desc: 'Rainfall (mm)'
     },
   ];
-
   public locateOptions = [
     {
       value: 'UK',
@@ -53,37 +54,86 @@ export class HomeComponent implements OnInit {
       desc: 'Wales'
     },
   ];
+  public breakpoint: number;
+  // #endregion
 
   constructor(private _ws: WeatherService) { }
 
-  ngOnInit() {
-
-
+  ngOnInit() { 
+    this.breakpoint = (window.innerWidth <= 400) ? 1 : 2;
   }
 
-  public loadWeather() {
+  public onResize(event) {
+    this.breakpoint = (event.target.innerWidth <= 400) ? 1 : 2;
+  }
+
+  private loadWeather() {
     this._ws.getWeathers(this.selectedMetric, this.selectedLocate).subscribe(res => {
       this.filterData(res);
     });
   }
 
   private filterData(data) {
-     this.arrayWeather = [];
-     data.filter(d => d.year >= this.yFrom && d.year <= this.yTo).map(o=>{
-       if(o.year  === this.yFrom && o.month >= this.mFrom){
-          this.arrayWeather.push(o);
-          return;
-       }
-       if(o.year !== this.yFrom && o.year !==this.yTo){
-        this.arrayWeather.push(o);
-        return;
-       }
-       if(o.year  === this.yTo && o.month <= this.mTo){
-        this.arrayWeather.push(o);
-        return;
-       }
-    });
+    this.arrayWeather = [];
+    let labels = [];
+    let dataValues = [];
 
+    data.filter(d => d.year >= this.yFrom && d.year <= this.yTo).map(o => {
+      if (o.year === this.yFrom && o.month >= this.mFrom) {
+        this.arrayWeather.push(o);
+        let label = `${o.year}-${o.month}`;
+        labels.push(label);
+        dataValues.push(o.value);
+        return;
+      }
+      if (o.year !== this.yFrom && o.year !== this.yTo) {
+        this.arrayWeather.push(o);
+        let label = `${o.year}-${o.month}`;
+        labels.push(label);
+        dataValues.push(o.value);
+        return;
+      }
+      if (o.year === this.yTo && o.month <= this.mTo) {
+        this.arrayWeather.push(o);
+        let label = `${o.year}-${o.month}`;
+        labels.push(label);
+        dataValues.push(o.value);
+        return;
+      }
+    });
+    
+    // this.arrayWeather.map(o => {
+    //   let label = `${o.year}-${o.month}`;
+    //   labels.push(label);
+    //   dataValues.push(o.value);
+    // });
+
+    this.chart = new Chart('canvas', {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: dataValues,
+            borderColor: '#e2e2e2',
+            fill: true
+          }
+        ]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        scales: {
+          xAxes: [{
+            display: true
+          }],
+          yAxes: [{
+            display: true
+          }]
+        }
+      }
+    });
   }
 
   public dateFrom(event: MatDatepickerInputEvent<Date>) {

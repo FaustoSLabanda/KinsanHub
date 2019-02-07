@@ -20,7 +20,6 @@ export class WeatherService {
     );
   }
 
-
   public responseServices(res: any) {
     if (res.type !== 0) {
         return res || {};
